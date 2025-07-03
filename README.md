@@ -1,44 +1,56 @@
-# simple-labeler
+# opc-ogsub-geo-ml-interpretation
 
-**simple-labeler** is an interactive image labeling application built with Streamlit. It allows users to label images sourced from local folders or remote object storage (such as AWS S3).
-
-## Features
-
-- Loads image file paths from specified local folders or S3 buckets.
-- Supports common image formats: `.png`, `.jpg`, `.jpeg`.
-- Presents an intuitive labeling interface via Streamlit.
-- Dockerized for easy deployment.
-
-## How It Works
-
-1. The app scans the folders defined by `FOLDER_A` and `FOLDER_B` (local or S3).
-2. It collects all image files and pairs each image path with its source folder.
-3. Users can label images through the web interface.
+This project provides a simple image labeling tool using Streamlit, designed for machine learning interpretation tasks in geoscience.
 
 ## Getting Started
 
-### Prerequisites
+### Running Locally
 
-- Docker installed on your machine
-- AWS credentials configured (if using S3)
-- Access to the required S3 buckets or local folders
-
-### Build the Docker Image
-
-Replace `<bucketName>` in the Dockerfile with your actual S3 bucket name if using S3.
+To start the Streamlit app locally, run:
 
 ```bash
-docker buildx build -t image_labeling_app .
+streamlit run src/image_labeling_app.py
 ```
 
-### Run the Application
+### Using Docker
+
+#### Build the Docker image
 
 ```bash
-docker run -d --name python-temp -p 8501:8501 image_labeling_app
+docker buildx build -t simple-labeler .
 ```
 
-The app will be available at [http://localhost:8501](http://localhost:8501).
+#### Run the container (detached mode)
+
+```bash
+docker run -d --name simple-labeler -v ./image_stats.json:/app/image_stats.json -p 8501:8501 simple-labeler
+```
+
+#### Run the container (interactive debug mode)
+
+```bash
+docker run -it --rm --name simple-labeler -v ./image_stats.json:/app/image_stats.json -p 8501:8501 --entrypoint bash simple-labeler
+```
+
+## Image Statistics
+
+The `image_stats.json` file is used to store statistics about image labeling guesses. This file will be empty in the repository but will be populated by the app as users interact with it.
+
+Example structure:
+
+```json
+{
+    "FOLDER_A/5000c.JPG": { "correct": 1, "incorrect": 0 },
+    "FOLDER_A/5000a.JPG": { "correct": 2, "incorrect": 1 },
+    "FOLDER_B/300a.JPG": { "correct": 0, "incorrect": 1 },
+    "FOLDER_B/300d.JPG": { "correct": 1, "incorrect": 0 },
+    "FOLDER_B/300b.JPG": { "correct": 2, "incorrect": 2 },
+    "FOLDER_A/5000b.JPG": { "correct": 0, "incorrect": 1 },
+    "FOLDER_A/5000d.JPG": { "correct": 0, "incorrect": 1 },
+    "FOLDER_B/300c.JPG": { "correct": 1, "incorrect": 1 }
+}
+```
+
+Each entry tracks the number of correct and incorrect guesses for each image.
 
 ---
-
-For more details, refer to the source code and comments within the repository.
