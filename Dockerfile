@@ -17,10 +17,10 @@ WORKDIR /app
 COPY ./src /app/src
 
 #Bringing the images from a S3 bucket
-RUN mkdir -p /app/holstein && \
-    mkdir -p /app/syn2seis && \
-    aws s3 sync s3://sil-images-labeling/holstein /app/holstein && \
-    aws s3 sync s3://sil-images-labeling/syn2seis /app/syn2seis
+RUN mkdir -p /app/FOLDER_A && \
+    mkdir -p /app/FOLDER_B && \
+    aws s3 sync s3://<s3-Bucket>/<ObjectPath> /app/FOLDER_A && \
+    aws s3 sync s3://<s3-Bucket>/<ObjectPath> /app/FOLDER_B
 
 # Creating venv and installing dependencies
 RUN python3 -m venv .venv
